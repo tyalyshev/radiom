@@ -27,19 +27,28 @@ public class Main {
         System.out.println(currObj.get("StartTime").getAsString());
         System.out.println("HISTORY \n");
 
+        DbConnect pg = new DbConnect();
+
         for (JsonElement user : questions) {
             JsonObject userObject = user.getAsJsonObject();
+
 
             System.out.println(userObject.get("Artist").getAsString());
             System.out.println(userObject.get("Song").getAsString());
             System.out.println(userObject.get("StartTime").getAsString());
+            String sqlExecute = "INSERT INTO maximum VALUES (nextval('auto_rows_id'), '" +
+                    userObject.get("Artist").getAsString() + "','" + userObject.get("Song").getAsString() + "','" +
+                    userObject.get("StartTime").getAsString() + "')";
+
+            pg.sqlInsertQuerty(sqlExecute);
+
         }
 
 
 
     }
 
-    public static URL createUrl(String link) {
+    private static URL createUrl(String link) {
         try {
             return new URL(link);
         } catch (MalformedURLException e) {
@@ -48,7 +57,7 @@ public class Main {
         }
     }
 
-    public static String parseUrl(URL url) {
+    private static String parseUrl(URL url) {
         if (url == null) {
             return "";
         }

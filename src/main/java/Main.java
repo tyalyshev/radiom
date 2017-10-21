@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 
-public class Main {
+public class  Main {
     public static void main(String[] args) {
 
         String radiourl = "http://www.maximum.ru/currenttrack.aspx?station=maximum";
@@ -32,13 +32,20 @@ public class Main {
         for (JsonElement user : questions) {
             JsonObject userObject = user.getAsJsonObject();
 
+            String asr = userObject.get("Artist").getAsString();
+            String asrreg = asr.replace("\'","\''");
+            String ssr = userObject.get("Song").getAsString();
+            String ssrreg = ssr.replace("\'","\''");
+            String strreg = userObject.get("StartTime").getAsString();
 
             System.out.println(userObject.get("Artist").getAsString());
             System.out.println(userObject.get("Song").getAsString());
             System.out.println(userObject.get("StartTime").getAsString());
-            String sqlExecute = "INSERT INTO maximum VALUES (nextval('auto_rows_id'), '" +
-                    userObject.get("Artist").getAsString() + "','" + userObject.get("Song").getAsString() + "','" +
-                    userObject.get("StartTime").getAsString() + "')";
+
+
+            String sqlExecute = "INSERT INTO maximum VALUES (nextval('auto_rows_id'), '" + asrreg + "','" + ssrreg + "','" + strreg + "')";
+
+            //System.out.println(sqlExecute);
 
             pg.sqlInsertQuerty(sqlExecute);
 

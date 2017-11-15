@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class  Main {
@@ -21,10 +22,14 @@ public class  Main {
         JsonArray questions = mainObject.getAsJsonArray("History");
         JsonObject currObj = mainObject.getAsJsonObject("Current");
 
+        ArrayList<String> artistList = new ArrayList<>();
+        ArrayList<String> songList = new ArrayList<>();
+        ArrayList<String> starttimeList = new ArrayList<>();
+
         System.out.println("CURRENT \n");
-        System.out.println(currObj.get("Artist").getAsString());
-        System.out.println(currObj.get("Song").getAsString());
-        System.out.println(currObj.get("StartTime").getAsString());
+        //System.out.println(currObj.get("Artist").getAsString());
+        //System.out.println(currObj.get("Song").getAsString());
+        //System.out.println(currObj.get("StartTime").getAsString());
         System.out.println("HISTORY \n");
 
         DbConnect pg = new DbConnect();
@@ -38,22 +43,34 @@ public class  Main {
             String ssrreg = ssr.replace("\'","\''");
             String strreg = userObject.get("StartTime").getAsString();
 
-            System.out.println(userObject.get("Artist").getAsString());
-            System.out.println(userObject.get("Song").getAsString());
-            System.out.println(userObject.get("StartTime").getAsString());
+            //System.out.println(userObject.get("Artist").getAsString());
+            //System.out.println(userObject.get("Song").getAsString());
+            //System.out.println(userObject.get("StartTime").getAsString());
+
+            artistList.add(asrreg);
+            songList.add(ssrreg);
+            starttimeList.add(strreg);
 
 
-            String sqlExecute = "INSERT INTO maximum VALUES (nextval('auto_rows_id'), '" + asrreg + "','" + ssrreg + "','" + strreg + "')";
+            //String sqlExecute = "INSERT INTO maximum VALUES (nextval('auto_rows_id'), '" + asrreg + "','" + ssrreg + "','" + strreg + "')";
 
             //System.out.println(sqlExecute);
 
-            pg.sqlInsertQuerty(sqlExecute);
+            //pg.sqlInsertQuerty(sqlExecute);
 
         }
 
+        ArrayList<String> reversArtistList = revers(artistList);
+        ArrayList<String> reversSongList = revers(songList);
+        ArrayList<String> reverStartTimetList = revers(starttimeList);
 
+        for (int i = 0; i < reversArtistList.size(); i++){
 
-    }
+            String sqlExecute = "INSERT INTO maximum VALUES (nextval('auto_rows_id'), '" + reversArtistList.get(i) +
+                    "','" + reversSongList.get(i) + "','" + reverStartTimetList.get(i) + "')";
+             pg.sqlInsertQuerty(sqlExecute);
+        }
+     }
 
     private static URL createUrl(String link) {
         try {
@@ -81,6 +98,16 @@ public class  Main {
             e.printStackTrace();
         }
         return stringBuilder.toString();
+    }
+
+    private static ArrayList<String> revers(ArrayList<String> list) {
+        int a = list.size() - 1;
+        ArrayList<String> result = new ArrayList<>();
+        for (int i  = 0; i < a; i++){
+             result.add(list.get(a - i));
+        }
+        return result;
+
     }
 
 }

@@ -3,6 +3,9 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class DbConnect {
 
@@ -10,65 +13,105 @@ public class DbConnect {
 
         System.out.println("SQL execute");
 
-    }
-    public void sqlInsertQuerty(String resultSqlString) {
+       /* FileInputStream fis;
+        Properties property = new Properties();
         try {
-            Class.forName("org.postgresql.Driver");
-            String url = "jdbc:postgresql://192.168.31.149:5432/radiom";
-            String login = "postgres";
-            String password = "postgres";
-            Connection con = DriverManager.getConnection(url, login, password);
+            fis = new FileInputStream("src/main/java/db.properties");
+            property.load(fis);
+
+            String host = property.getProperty("dbhost");
+            String login = property.getProperty("dblogin");
+            String passwd = property.getProperty("dbpass");
+
+            System.out.println("HOST: " + host  + ", LOGIN: " + login + ", PASSWORD: " + passwd);
+
+        } catch (IOException e) {
+            System.err.println("ОШИБКА: Файл свойств отсуствует!");
+        }
+*/
+    }
+
+    public void sqlInsertQuerty(String resultSqlString) {
+
+        try {
+            FileInputStream fis;
+            Properties property = new Properties();
+
+            fis = new FileInputStream("src/main/resources/db.properties");
+            property.load(fis);
+
+            String dbhost = property.getProperty("dbhost");
+            String dblogin = property.getProperty("dblogin");
+            String dbpasswd = property.getProperty("dbpass");
+
             try {
-                Statement stmt = con.createStatement();
-                stmt.executeUpdate(resultSqlString);
 
-                stmt.close();
-            }   finally {
-                con.close();
-            }
+                Class.forName("org.postgresql.Driver");
+                String url = "jdbc:postgresql://" + dbhost;
+                String login = dblogin;
+                String password = dbpasswd;
+                Connection con = DriverManager.getConnection(url, login, password);
+                try {
+                    Statement stmt = con.createStatement();
+                    stmt.executeUpdate(resultSqlString);
 
-            }   catch (Exception e) {
+                    stmt.close();
+                } finally {
+                    con.close();
+                }
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+            catch (IOException e) {
+            System.err.println("ОШИБКА: Файл свойств отсуствует!");
+        }
+
     }
     public ArrayList sqlSelectQuerty() {
         ArrayList<String> timeInBase = new ArrayList<>();
+
         try {
-            Class.forName("org.postgresql.Driver");
-            String url = "jdbc:postgresql://192.168.31.149:5432/radiom";
-            String login = "postgres";
-            String password = "postgres";
-            Connection c = DriverManager.getConnection(url, login, password);
+            FileInputStream fis;
+            Properties property = new Properties();
+
+            fis = new FileInputStream("src/main/resources/db.properties");
+            property.load(fis);
+
+            String dbhost = property.getProperty("dbhost");
+            String dblogin = property.getProperty("dblogin");
+            String dbpasswd = property.getProperty("dbpass");
+
             try {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery( "SELECT * FROM maximum ORDER BY id DESC LIMIT 10;" );
-                while (rs.next()){
-                    timeInBase.add(rs.getString("dtime"));
+                Class.forName("org.postgresql.Driver");
+                String url = "jdbc:postgresql://" + dbhost;
+                String login = dblogin;
+                String password = dbpasswd;
+                Connection c = DriverManager.getConnection(url, login, password);
+                try {
+                    Statement stmt = c.createStatement();
+                    ResultSet rs = stmt.executeQuery("SELECT * FROM maximum ORDER BY id DESC LIMIT 10;");
+                    while (rs.next()) {
+                        timeInBase.add(rs.getString("dtime"));
+                    }
+                    rs.close();
+                    stmt.close();
+
+                } finally {
+                    c.close();
+
                 }
-                rs.close();
-                stmt.close();
-
-            } finally {
-                c.close();
-
-            }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        }
+        catch (IOException e) {
+            System.err.println("ERROR: file not found!");
+        }
 
          return timeInBase;
 
         }
 
     }
-
-
-
-
-
-
-
-
-
-
-

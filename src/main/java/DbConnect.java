@@ -38,6 +38,7 @@ public class DbConnect {
             Properties property = new Properties();
 
             fis = new FileInputStream("src/main/resources/db.properties");
+
             property.load(fis);
 
             String dbhost = property.getProperty("dbhost");
@@ -77,6 +78,8 @@ public class DbConnect {
             Properties property = new Properties();
 
             fis = new FileInputStream("src/main/resources/db.properties");
+            //fis = new FileInputStream("db.properties");
+
             property.load(fis);
 
             String dbhost = property.getProperty("dbhost");
